@@ -65,4 +65,30 @@ router.route('/:id')
       .catch((err) => res.status(err.code || 500).send(err));
   });
 
+/**
+   * @api {DELETE} /pokemons/:id
+   * @apiGroup Pokemons
+   *
+   * @apiParam {Number} ID required
+   *
+   * @apiExample Example usage:
+   * body:
+   *  {
+   *    id: "15"
+   *    treinador: "Gary"
+   *  }
+   *
+   *  @apiSuccess {JSON}
+   *  HTTP/1.1 204
+   *
+   * @apiErrorExample {JSON}
+   *  HTTP/1.1 404
+   */
+router.route('/:id')
+  .delete((req, res) => {
+    pokemons.deletar(req.params.id)
+      .then((result) => res.status(result.code || 204).send(result.message))
+      .catch((err) => res.status(err.code || 500).send(err));
+  });
+
 module.exports = router;

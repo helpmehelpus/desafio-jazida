@@ -26,6 +26,15 @@ class Pokemons {
     await pokemon.save();
     return { code: 204 };
   }
+
+  async deletar(pokemonId) {
+    const pokemon = await Pokemon.findByPk(pokemonId);
+    if (!pokemon) {
+      return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+    }
+    await pokemon.destroy();
+    return { code: 204 };
+  }
 }
 
 module.exports = Pokemons;
