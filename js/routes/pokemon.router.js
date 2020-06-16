@@ -29,4 +29,21 @@ router.route('/')
       .catch((err) => res.status(err.code || 500).send(err));
   });
 
+/**
+   * @api {PUT} /pokemons/:id Alterar pokemon
+   * @apiGroup Pokemons
+   *
+   * @apiSuccess {JSON}
+   *  HTTP/1.1 204
+   *
+   * @apiErrorExample {JSON}
+   *  HTTP/1.1 400
+   */
+router.route('/:id')
+  .put((req, res) => {
+    pokemons.alterar(req.params.id, req.body.treinador)
+      .then(() => res.status(204).end())
+      .catch((err) => res.status(err.code || 500).send(err));
+  });
+
 module.exports = router;

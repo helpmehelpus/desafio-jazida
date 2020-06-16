@@ -13,6 +13,19 @@ class Pokemons {
     });
     return pokemon;
   }
+
+  async alterar(pokemonId, novoTreinador) {
+    const pokemon = await Pokemon.findByPk(pokemonId);
+    if (!pokemon) {
+      return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+    }
+    if (pokemon.treinador === novoTreinador) {
+      return pokemon;
+    }
+    pokemon.treinador = novoTreinador;
+    await pokemon.save();
+    return { code: 204 };
+  }
 }
 
 module.exports = Pokemons;
