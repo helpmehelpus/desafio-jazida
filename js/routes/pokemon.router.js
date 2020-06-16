@@ -90,7 +90,7 @@ router.route('/:id')
   });
 
 /**
- * @api {GET} /pokemon/:id Carregar Pokemon
+ * @api {GET} /pokemons/:id Carregar Pokemon
  * @apiGroup Pokemons
  *
  * @apiParam {Number} ID required
@@ -101,11 +101,29 @@ router.route('/:id')
  * @apiSuccess {JSON}
  * HTTP/1.1 200
  *
- * @apiExample Example usage:
+ * @apiErrorExample {JSON}
+ *  HTTP/1.1 404
  */
 router.route('/:id')
   .get((req, res) => {
     pokemons.carregar(req.params.id)
+      .then((result) => res.json(result))
+      .catch((err) => res.status(err.code || 500).send(err));
+  });
+
+/**
+   * @api {GET} /pokdemons
+   * @apiGroup Pokemons
+   *
+   * @apiExample Example usage:
+   * GET /pokemons/
+   *
+   * @apiSucces {JSON}
+   * HTTP/1.1200
+   */
+router.route('/')
+  .get((req, res) => {
+    pokemons.listar(req.params.id)
       .then((result) => res.json(result))
       .catch((err) => res.status(err.code || 500).send(err));
   });

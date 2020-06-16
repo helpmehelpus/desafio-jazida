@@ -43,6 +43,11 @@ class Pokemons {
     }
     return pokemon;
   }
+
+  async listar() {
+    const listaPokemons = await Pokemon.findAll();
+    return listaPokemons;
+  }
 }
 
 module.exports = Pokemons;
