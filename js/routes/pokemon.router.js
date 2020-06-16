@@ -13,6 +13,7 @@ const router = express.Router();
  * @apiParam {String} treinador required
  *
  * @apiExample Example usage:
+ *  POST /pokemons
  *  body:
  *  {
  *    "tipo": "charizard",
@@ -43,12 +44,13 @@ router.route('/')
    * @api {PUT} /pokemons/:id Alterar pokemon
    * @apiGroup Pokemons
    *
-   * @apiParam {Number} ID required
+   * @apiParam {Number} id required
+   * @apiParam {String} treinador required
    *
    * @apiExample Example usage:
+   * PUT /pokemons/:id
    *  body:
    *  {
-   *    id: "15"
    *    treinador: "Gary"
    *  }
    *
@@ -69,16 +71,12 @@ router.route('/:id')
    * @api {DELETE} /pokemons/:id
    * @apiGroup Pokemons
    *
-   * @apiParam {Number} ID required
+   * @apiParam {Number} id required
    *
    * @apiExample Example usage:
-   * body:
-   *  {
-   *    id: "15"
-   *    treinador: "Gary"
-   *  }
+   * DELETE /pokemons/:id
    *
-   *  @apiSuccess {JSON}
+   * @apiSuccess {JSON}
    *  HTTP/1.1 204
    *
    * @apiErrorExample {JSON}
@@ -88,6 +86,27 @@ router.route('/:id')
   .delete((req, res) => {
     pokemons.deletar(req.params.id)
       .then((result) => res.status(result.code || 204).send(result.message))
+      .catch((err) => res.status(err.code || 500).send(err));
+  });
+
+/**
+ * @api {GET} /pokemon/:id Carregar Pokemon
+ * @apiGroup Pokemons
+ *
+ * @apiParam {Number} ID required
+ *
+ * @apiExample Example usage:
+ * GET /pokemons/:id
+ *
+ * @apiSuccess {JSON}
+ * HTTP/1.1 200
+ *
+ * @apiExample Example usage:
+ */
+router.route('/:id')
+  .get((req, res) => {
+    pokemons.carregar(req.params.id)
+      .then((result) => res.json(result))
       .catch((err) => res.status(err.code || 500).send(err));
   });
 

@@ -35,6 +35,14 @@ class Pokemons {
     await pokemon.destroy();
     return { code: 204 };
   }
+
+  async carregar(pokemonId) {
+    const pokemon = await Pokemon.findByPk(pokemonId);
+    if (!pokemon) {
+      return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+    }
+    return pokemon;
+  }
 }
 
 module.exports = Pokemons;
