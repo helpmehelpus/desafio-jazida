@@ -9,7 +9,17 @@ const router = express.Router();
  * @api {POST} /pokemons [POST] Criar novo pokemon
  * @apiGroup Pokemons
  *
- * @apiSuccess {JSON} Pokemon
+ * @apiParam {String} tipo required
+ * @apiParam {String} treinador required
+ *
+ * @apiExample Example usage:
+ *  body:
+ *  {
+ *    "tipo": "charizard",
+ *    "treinador": "adriano"
+ *  }
+ *
+ * @apiSuccess {JSON} Pokemon object
  * @apiSuccessExample {JSON} Success-Response:
  *  HTTP/1.1 200 OK
  *  {
@@ -33,16 +43,25 @@ router.route('/')
    * @api {PUT} /pokemons/:id Alterar pokemon
    * @apiGroup Pokemons
    *
+   * @apiParam {Number} ID required
+   *
+   * @apiExample Example usage:
+   *  body:
+   *  {
+   *    id: "15"
+   *    treinador: "Gary"
+   *  }
+   *
    * @apiSuccess {JSON}
    *  HTTP/1.1 204
    *
    * @apiErrorExample {JSON}
-   *  HTTP/1.1 400
+   *  HTTP/1.1 404
    */
 router.route('/:id')
   .put((req, res) => {
     pokemons.alterar(req.params.id, req.body.treinador)
-      .then(() => res.status(204).end())
+      .then((result) => res.status(result.code || 204).send(result.message))
       .catch((err) => res.status(err.code || 500).send(err));
   });
 
