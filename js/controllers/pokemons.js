@@ -77,13 +77,6 @@ class Pokemons {
     await pokemon.save();
     return pokemon;
   }
-  // async getById(pokemonId) {
-  //   const pokemon = await Pokemon.findByPk(pokemonId);
-  //   if (!pokemon) {
-  //     return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
-  //   }
-  //   return pokemon;
-  // }
 }
 
 module.exports = Pokemons;
