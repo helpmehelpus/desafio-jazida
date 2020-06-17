@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize');
+const credentials = require('../config/keys');
 
-const connection = new Sequelize('Desafio-jz', 'DesafioAdmin', 'Picachu123',
+const connection = new Sequelize(credentials.dbName, credentials.dbUser, credentials.dbPassword,
   {
-    host: 'jzd-dev-desafio.database.windows.net',
+    host: credentials.dbHost,
     dialect: 'mssql',
     dialectOptions: {
       options: {
