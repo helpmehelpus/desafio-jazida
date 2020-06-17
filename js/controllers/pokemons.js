@@ -15,8 +15,8 @@ class Pokemons {
   }
 
   async alterar(pokemonId, novoTreinador) {
-    const pokemon = await Pokemon.findByPk(pokemonId);
-    if (!pokemon) {
+    const pokemon = await this.carregar(pokemonId);
+    if (!pokemon.id) {
       return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
     }
     if (pokemon.treinador === novoTreinador) {
@@ -28,8 +28,8 @@ class Pokemons {
   }
 
   async deletar(pokemonId) {
-    const pokemon = await Pokemon.findByPk(pokemonId);
-    if (!pokemon) {
+    const pokemon = await this.carregar(pokemonId);
+    if (!pokemon.id) {
       return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
     }
     await pokemon.destroy();
@@ -46,8 +46,44 @@ class Pokemons {
 
   async listar() {
     const listaPokemons = await Pokemon.findAll();
+    if (!listaPokemons) {
+      return { code: 404, message: 'Nao foi possivel carregar lista de pokemons' };
+    }
     return listaPokemons;
   }
+
+  async incrementaNivel(pokemonId) {
+    const pokemon = await this.carregar(pokemonId);
+    if (!pokemon.id) {
+      return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+    }
+    pokemon.nivel += 1;
+    await pokemon.save();
+    return pokemon;
+  }
+
+  async decrementaNivel(pokemonId) {
+    const pokemon = await this.carregar(pokemonId);
+    if (!pokemon.id) {
+      return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+    }
+    pokemon.nivel -= 1;
+    if (pokemon.nivel === 0) {
+      console.log(`Pokemon ${pokemonId} morreu!`);
+      const pokemonMorto = pokemon;
+      await pokemon.destroy();
+      return pokemonMorto;
+    }
+    await pokemon.save();
+    return pokemon;
+  }
+  // async getById(pokemonId) {
+  //   const pokemon = await Pokemon.findByPk(pokemonId);
+  //   if (!pokemon) {
+  //     return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+  //   }
+  //   return pokemon;
+  // }
 }
 
 module.exports = Pokemons;
