@@ -5,37 +5,41 @@ const pokemons = new Pokemons();
 
 class Batalhas {
   async batalhar(pokemonAId, pokemonBId) {
-    let pokemonA = await pokemons.carregar(pokemonAId);
+    const pokemonA = await pokemons.carregar(pokemonAId);
     if (!pokemonA.id) {
       return { code: 404, message: `Pokemon com id ${pokemonAId} nao encontrado.` };
     }
-    let pokemonB = await pokemons.carregar(pokemonBId);
+    const pokemonB = await pokemons.carregar(pokemonBId);
     if (!pokemonB.id) {
       return { code: 404, message: `Pokemon com id ${pokemonBId} nao encontrado.` };
     }
-    let vencedor;
-    let perdedor;
+    const result = this.calculaResultadoBatalha(pokemonA, pokemonB);
+    return result;
+  }
+
+  async calculaResultadoBatalha(pokemonA, pokemonB) {
     const chanceVitoriaDeA = pokemonA.nivel / (pokemonA.nivel + pokemonB.nivel);
     const sorteio = Math.random();
+    let pokemonAAtualizado;
+    let pokemonBAtualizado;
+    let result;
     if (sorteio <= chanceVitoriaDeA) {
       console.log(`Pokemon ${pokemonA.id} vence`);
-      pokemonA = await pokemons.incrementaNivel(pokemonA.id);
-      pokemonB = await pokemons.decrementaNivel(pokemonB.id);
-      vencedor = pokemonA;
-      perdedor = pokemonB;
-    } else {
-      console.log(`Pokemon ${pokemonB.id} vence`);
-      pokemonB = await pokemons.incrementaNivel(pokemonB.id);
-      pokemonA = await pokemons.decrementaNivel(pokemonA.id);
-      vencedor = pokemonB;
-      perdedor = pokemonA;
+      pokemonAAtualizado = await pokemons.incrementaNivel(pokemonA.id);
+      pokemonBAtualizado = await pokemons.decrementaNivel(pokemonB.id);
+      result = {
+        vencedor: pokemonAAtualizado,
+        perdedor: pokemonBAtualizado,
+      };
     }
-    console.log(vencedor);
-    console.log(perdedor);
-    return {
-      vencedor,
-      perdedor,
+    console.log(`Pokemon ${pokemonB.id} vence`);
+    pokemonBAtualizado = await pokemons.incrementaNivel(pokemonB.id);
+    pokemonAAtualizado = await pokemons.decrementaNivel(pokemonA.id);
+    result = {
+      vencedor: pokemonBAtualizado,
+      perdedor: pokemonAAtualizado,
     };
+    return result;
   }
 }
 
