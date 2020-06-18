@@ -1,10 +1,11 @@
+/* eslint-disable no-throw-literal */
 /* eslint-disable class-methods-use-this */
 const Pokemon = require('../models/pokemon');
 
 class Pokemons {
   async criar(objetoPokemon) {
     if (objetoPokemon.tipo !== 'charizard' && objetoPokemon.tipo !== 'mewtwo' && objetoPokemon.tipo !== 'pikachu') {
-      return { code: 400, message: `Tipo ${objetoPokemon.tipo} invalido.` };
+      throw { code: 400, message: `Tipo ${objetoPokemon.tipo} invalido.` };
     }
     const pokemon = await Pokemon.create({
       tipo: objetoPokemon.tipo,
@@ -39,7 +40,7 @@ class Pokemons {
   async carregar(pokemonId) {
     const pokemon = await Pokemon.findByPk(pokemonId);
     if (!pokemon) {
-      return { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+      throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
     }
     return pokemon;
   }

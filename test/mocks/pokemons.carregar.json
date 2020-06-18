@@ -1,0 +1,12 @@
+{
+  "sucessoCarregar": {
+    "id": 1,
+    "tipo": "pikachu",
+    "treinador": "Jun",
+    "nivel": 1
+  },
+  "erroCarregar": {
+    "code": 404,
+    "message": "Pokemon com id 6 nao encontrado"
+  }
+}

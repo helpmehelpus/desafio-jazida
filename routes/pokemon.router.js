@@ -37,7 +37,7 @@ router.route('/')
   .post((req, res) => {
     pokemons.criar(req.body)
       .then((result) => res.json(result))
-      .catch((err) => res.status(err.code || 500).send(err));
+      .catch((err) => res.status(err.code || 400).send(err));
   });
 
 /**

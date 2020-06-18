@@ -1,0 +1,14 @@
+{
+  "sucessoCriar" :
+  {
+    "id": 1,
+    "tipo": "pikachu",
+    "treinador": "Jun",
+    "nivel": 1
+  },
+  "erroCriar":
+  {
+    "code": 400,
+    "message": "Tipo bulbassauro invalido."
+  }
+}
