@@ -2,80 +2,125 @@
 /* eslint-disable class-methods-use-this */
 const Pokemon = require('../models/pokemon');
 
+const logger = require('../utils/logger');
+
 class Pokemons {
   async criar(objetoPokemon) {
     if (objetoPokemon.tipo !== 'charizard' && objetoPokemon.tipo !== 'mewtwo' && objetoPokemon.tipo !== 'pikachu') {
+      logger.error(`Pokemons - Erro ao tentar criar pokemon de tipo ${objetoPokemon.tipo} invalido`);
       throw { code: 400, message: `Tipo ${objetoPokemon.tipo} invalido.` };
     }
-    const pokemon = await Pokemon.create({
-      tipo: objetoPokemon.tipo,
-      treinador: objetoPokemon.treinador,
-      nivel: 1,
-    });
+    let pokemon;
+    try {
+      pokemon = await Pokemon.create({
+        tipo: objetoPokemon.tipo,
+        treinador: objetoPokemon.treinador,
+        nivel: 1,
+      });
+    } catch (err) {
+      logger.error('Pokemons - Erro ao tentar criar pokemon');
+      throw { code: 500, message: 'Erro interno do servidor' };
+    }
     return pokemon;
   }
 
   async alterar(pokemonId, novoTreinador) {
-    const pokemon = await this.carregar(pokemonId);
-    if (!pokemon.id) {
-      throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
-    }
-    if (pokemon.treinador === novoTreinador) {
-      return pokemon;
+    let pokemon;
+    try {
+      pokemon = await this.carregar(pokemonId);
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar alterar pokemon com id: ${err}`);
+      throw { code: 500, message: 'Erro interno do servidor' };
     }
     pokemon.treinador = novoTreinador;
-    await pokemon.save();
+    try {
+      await pokemon.save();
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar alterar pokemon com id: ${err}`);
+      throw { code: 500, message: 'Erro interno do servidor' };
+    }
     return { code: 204 };
   }
 
   async deletar(pokemonId) {
-    const pokemon = await this.carregar(pokemonId);
-    if (!pokemon.id) {
+    let pokemon;
+    try {
+      pokemon = await this.carregar(pokemonId);
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar deletar pokemon com id: ${err}`);
       throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
     }
-    await pokemon.destroy();
+    try {
+      await pokemon.destroy();
+      logger.warn(`Pokemons - pokemon com id ${pokemonId} sendo destruido`);
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar deletar pokemon com id: ${err}`);
+      throw { code: 500, message: 'Erro interno do servidor' };
+    }
     return { code: 204 };
   }
 
   async carregar(pokemonId) {
-    const pokemon = await Pokemon.findByPk(pokemonId);
-    if (!pokemon) {
+    let pokemon;
+    try {
+      pokemon = await Pokemon.findByPk(pokemonId, { rejectOnEmpty: true });
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar carregar pokemon com id: ${err}`);
       throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
     }
     return pokemon;
   }
 
   async listar() {
-    const listaPokemons = await Pokemon.findAll();
-    if (!listaPokemons) {
-      throw { code: 404, message: 'Nao foi possivel carregar lista de pokemons' };
+    let listaPokemons;
+    try {
+      listaPokemons = await Pokemon.findAll();
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar carregar lista de pokemons: ${err}`);
+      throw { code: 500, message: 'Erro interno do servidor' };
     }
     return listaPokemons;
   }
 
   async incrementaNivel(pokemonId) {
-    const pokemon = await this.carregar(pokemonId);
-    if (!pokemon.id) {
+    let pokemon;
+    try {
+      pokemon = await this.carregar(pokemonId);
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar incrementar nivel de pokemon com id: ${err}`);
       throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
     }
     pokemon.nivel += 1;
-    await pokemon.save();
+    try {
+      await pokemon.save();
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar incrementar nivel de pokemon com id: ${err}`);
+      throw { code: 500, message: 'Erro interno do servidor' };
+    }
     return pokemon;
   }
 
   async decrementaNivel(pokemonId) {
-    const pokemon = await this.carregar(pokemonId);
-    if (!pokemon.id) {
+    let pokemon;
+    try {
+      pokemon = await this.carregar(pokemonId);
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar decrementar nivel de pokemon com id: ${err}`);
       throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
     }
     pokemon.nivel -= 1;
     if (pokemon.nivel === 0) {
-      console.log(`Pokemon ${pokemonId} morreu!`);
+      logger.info(`Pokemon ${pokemonId} morreu. Deletando`);
       const pokemonMorto = pokemon;
-      await pokemon.destroy();
+      await this.deletar(pokemonId);
       return pokemonMorto;
     }
-    await pokemon.save();
+    try {
+      await pokemon.save();
+    } catch (err) {
+      logger.error(`Pokemons - Erro ao tentar decrementar nivel de pokemon com id: ${err}`);
+      throw { code: 500, message: 'Erro interno do servidor' };
+    }
     return pokemon;
   }
 }
