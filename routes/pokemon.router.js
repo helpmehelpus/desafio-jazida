@@ -13,15 +13,14 @@ const router = express.Router();
  * @apiParam {String} treinador required
  *
  * @apiExample Example usage:
- *  POST /pokemons
+ *  POST /pokemons/
  *  body:
  *  {
  *    "tipo": "charizard",
  *    "treinador": "adriano"
  *  }
  *
- * @apiSuccess {JSON} Pokemon object
- * @apiSuccessExample {JSON} Success-Response:
+ * @apiSuccessExample {JSON} Success Response:
  *  HTTP/1.1 200 OK
  *  {
  *    "id": 11
@@ -29,8 +28,9 @@ const router = express.Router();
  *    "treinador": "Ash"
  *    "nivel": 1
  *  }
- * @apiErrorExample {JSON}
- *  HTTP/1.1 400
+ *
+ * @apiErrorExample {JSON} Error
+ *  HTTP/1.1 { code: 400, message: 'Tipo psyduck invalido.' }
  *
  */
 router.route('/')
@@ -41,24 +41,24 @@ router.route('/')
   });
 
 /**
- * @api {PUT} /pokemons/:id Alterar pokemon
+ * @api {PUT} /pokemons/:id [PUT] Alterar pokemon
  * @apiGroup Pokemons
  *
  * @apiParam {Number} id required
  * @apiParam {String} treinador required
  *
  * @apiExample Example usage:
- * PUT /pokemons/:id
+ * PUT /pokemons/8
  *  body:
  *  {
  *    treinador: "Gary"
  *  }
  *
- * @apiSuccess {JSON}
+ * @apiSuccessExample {JSON} Success Response:
  *  HTTP/1.1 204
  *
- * @apiErrorExample {JSON}
- *  HTTP/1.1 404
+ * @apiErrorExample {JSON} Error
+ *  HTTP/1.1 { code: 404, message: `Pokemon com id 84 nao encontrado.` }
  */
 router.route('/:id')
   .put((req, res) => {
@@ -68,19 +68,19 @@ router.route('/:id')
   });
 
 /**
- * @api {DELETE} /pokemons/:id
+ * @api {DELETE} /pokemons/:id [DELETE] Deletar pokemon
  * @apiGroup Pokemons
  *
  * @apiParam {Number} id required
  *
  * @apiExample Example usage:
- * DELETE /pokemons/:id
+ * DELETE /pokemons/:8
  *
- * @apiSuccess {JSON}
+ * @apiSuccessExample {JSON} Success Response:
  *  HTTP/1.1 204
  *
- * @apiErrorExample {JSON}
- *  HTTP/1.1 404
+ * @apiErrorExample {JSON} Error
+ *  HTTP/1.1 { code: 404, message: `Pokemon com id 84 nao encontrado.` }
  */
 router.route('/:id')
   .delete((req, res) => {
@@ -90,7 +90,7 @@ router.route('/:id')
   });
 
 /**
- * @api {GET} /pokemons/:id Carregar Pokemon
+ * @api {GET} /pokemons/:id [GET] Carregar Pokemon
  * @apiGroup Pokemons
  *
  * @apiParam {Number} ID required
@@ -98,11 +98,17 @@ router.route('/:id')
  * @apiExample Example usage:
  * GET /pokemons/:id
  *
- * @apiSuccess {JSON}
- * HTTP/1.1 200
+ * @apiSuccessExample {JSON} Success Response:
+ *  HTTP/1.1 200
+ * {
+ *   "id": 1,
+ *   "tipo": "pikachu",
+ *   "treinador": "Thiago",
+ *   "nivel": 1
+ * }
  *
  * @apiErrorExample {JSON}
- *  HTTP/1.1 404
+ *  HTTP/1.1 { code: 404, message: `Pokemon com id 84 nao encontrado.` }
  */
 router.route('/:id')
   .get((req, res) => {
@@ -112,14 +118,25 @@ router.route('/:id')
   });
 
 /**
- * @api {GET} /pokdemons
+ * @api {GET} /pokemons [GET] Listar todos os pokemons
  * @apiGroup Pokemons
  *
  * @apiExample Example usage:
  * GET /pokemons/
  *
- * @apiSucces {JSON}
- * HTTP/1.1200
+ * @apiSuccessExample {JSON} Success Response:
+ * [{
+ *   "id": 1,
+ *   "tipo": "pikachu",
+ *   "treinador": "Thiago",
+ *   "nivel": 1
+ * }, {
+ *   "id": 2,
+ *   "tipo": "charizard",
+ *   "treinador": "Renato",
+ *   "nivel": 1
+ * }]
+ *
  */
 router.route('/')
   .get((req, res) => {
@@ -127,9 +144,5 @@ router.route('/')
       .then((result) => res.json(result))
       .catch((err) => res.status(err.code || 500).send(err));
   });
-
-/**
- * @api {POST} /pokemons/
- */
 
 module.exports = router;

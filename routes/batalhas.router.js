@@ -14,7 +14,6 @@ const router = express.Router();
  *
  * @apiExample Example usage:
  *  POST /batalhar/16/14
- *  body:
  *
  * @apiSuccess {JSON} Pokemon object
  * @apiSuccessExample {JSON} Success-Response:
