@@ -10,7 +10,9 @@ const criarPokemonMock = require('../mocks/pokemons.criar.json');
 const alterarPokemonMock = require('../mocks/pokemons.alterar.json');
 const deletarPokemonMock = require('../mocks/pokemons.deletar.json');
 const carregarPokemonMock = require('../mocks/pokemons.carregar.json');
-const  listarPokemonMock = require('../mocks/pokemons.listar.json');
+const listarPokemonMock = require('../mocks/pokemons.listar.json');
+const incrementaNivelMock = require('../mocks/pokemons.incrementaNivel.json');
+const decrementaNivelMock = require('../mocks/pokemons.decrementaNivel.json');
 
 describe('Pokemon Controller', () => {
   describe('Criar pokemon', () => {
@@ -96,5 +98,31 @@ describe('Pokemon Controller', () => {
       expect(response.length).to.equal(listarPokemonMock.length);
     });
   })
+
+  describe('Incrementa nivel', () => {
+    afterEach(() => {
+      pokemons.incrementaNivel.restore();
+    })
+    it('Deve Incrementar em 1 o nivel de um pokemon', async () => {
+      sinon.stub(pokemons, 'incrementaNivel')
+        .withArgs(1)
+        .resolves(incrementaNivelMock);
+      const response = await pokemons.incrementaNivel(1);
+      expect(response.nivel).to.equal(incrementaNivelMock.nivel);
+    });
+  });
+
+  describe('Decrementa nivel', () => {
+    afterEach(() => {
+      pokemons.decrementaNivel.restore();
+    })
+    it('Deve Decrementar em 1 o nivel de um pokemon', async () => {
+      sinon.stub(pokemons, 'decrementaNivel')
+        .withArgs(1)
+        .resolves(decrementaNivelMock);
+      const response = await pokemons.decrementaNivel(1);
+      expect(response.nivel).to.equal(decrementaNivelMock.nivel);
+    });
+  });
 });
 
