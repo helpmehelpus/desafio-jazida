@@ -30,7 +30,7 @@ class Pokemons {
       pokemon = await this.carregar(pokemonId);
     } catch (err) {
       logger.error(`Pokemons - Erro ao tentar alterar pokemon com id: ${err}`);
-      throw { code: 500, message: 'Erro interno do servidor' };
+      throw err;
     }
     pokemon.treinador = novoTreinador;
     try {
@@ -48,7 +48,7 @@ class Pokemons {
       pokemon = await this.carregar(pokemonId);
     } catch (err) {
       logger.error(`Pokemons - Erro ao tentar deletar pokemon com id: ${err}`);
-      throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+      throw err;
     }
     try {
       await pokemon.destroy();
@@ -88,14 +88,14 @@ class Pokemons {
       pokemon = await this.carregar(pokemonId);
     } catch (err) {
       logger.error(`Pokemons - Erro ao tentar incrementar nivel de pokemon com id: ${err}`);
-      throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+      throw err;
     }
     pokemon.nivel += 1;
     try {
       await pokemon.save();
     } catch (err) {
       logger.error(`Pokemons - Erro ao tentar incrementar nivel de pokemon com id: ${err}`);
-      throw { code: 500, message: 'Erro interno do servidor' };
+      throw err;
     }
     return pokemon;
   }
@@ -106,7 +106,7 @@ class Pokemons {
       pokemon = await this.carregar(pokemonId);
     } catch (err) {
       logger.error(`Pokemons - Erro ao tentar decrementar nivel de pokemon com id: ${err}`);
-      throw { code: 404, message: `Pokemon com id ${pokemonId} nao encontrado.` };
+      throw err;
     }
     pokemon.nivel -= 1;
     if (pokemon.nivel === 0) {

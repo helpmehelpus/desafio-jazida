@@ -2,16 +2,18 @@
 const Pokemons = require('./pokemons');
 
 const pokemons = new Pokemons();
+const logger = require('../utils/logger');
 
 class Batalhas {
   async batalhar(pokemonAId, pokemonBId) {
-    const pokemonA = await pokemons.carregar(pokemonAId);
-    if (!pokemonA.id) {
-      return { code: 404, message: `Pokemon com id ${pokemonAId} nao encontrado.` };
-    }
-    const pokemonB = await pokemons.carregar(pokemonBId);
-    if (!pokemonB.id) {
-      return { code: 404, message: `Pokemon com id ${pokemonBId} nao encontrado.` };
+    let pokemonA; let
+      pokemonB;
+    try {
+      pokemonA = await pokemons.carregar(pokemonAId);
+      pokemonB = await pokemons.carregar(pokemonBId);
+    } catch (err) {
+      logger.error(`Batalhas - Erro ao tentar iniciar batalha entre Pokemons ${pokemonAId} e ${pokemonAId}: ${err}`);
+      throw err;
     }
     const result = this.calculaResultadoBatalha(pokemonA, pokemonB);
     return result;
@@ -23,22 +25,27 @@ class Batalhas {
     let pokemonAAtualizado;
     let pokemonBAtualizado;
     let result;
-    if (sorteio <= chanceVitoriaDeA) {
-      console.log(`Pokemon ${pokemonA.id} vence`);
-      pokemonAAtualizado = await pokemons.incrementaNivel(pokemonA.id);
-      pokemonBAtualizado = await pokemons.decrementaNivel(pokemonB.id);
+    try {
+      if (sorteio <= chanceVitoriaDeA) {
+        logger.info(`Pokemon ${pokemonA.id} vence a batalha contra Pokemon ${pokemonB.id}`);
+        pokemonAAtualizado = await pokemons.incrementaNivel(pokemonA.id);
+        pokemonBAtualizado = await pokemons.decrementaNivel(pokemonB.id);
+        result = {
+          vencedor: pokemonAAtualizado,
+          perdedor: pokemonBAtualizado,
+        };
+      }
+      logger.info(`Pokemon ${pokemonB.id} vence a batalha contra Pokemon ${pokemonA.id}`);
+      pokemonBAtualizado = await pokemons.incrementaNivel(pokemonB.id);
+      pokemonAAtualizado = await pokemons.decrementaNivel(pokemonA.id);
       result = {
-        vencedor: pokemonAAtualizado,
-        perdedor: pokemonBAtualizado,
+        vencedor: pokemonBAtualizado,
+        perdedor: pokemonAAtualizado,
       };
+    } catch (err) {
+      logger.error('Batalhas - Erro ao tentar calcular resultado da batalha');
+      throw (err);
     }
-    console.log(`Pokemon ${pokemonB.id} vence`);
-    pokemonBAtualizado = await pokemons.incrementaNivel(pokemonB.id);
-    pokemonAAtualizado = await pokemons.decrementaNivel(pokemonA.id);
-    result = {
-      vencedor: pokemonBAtualizado,
-      perdedor: pokemonAAtualizado,
-    };
     return result;
   }
 }
