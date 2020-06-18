@@ -8,7 +8,8 @@
     "npm": "6.12.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "unit-tests": "mocha ./test/unit/*.js",
+    "integration-tests": "mocha ./test/integration/*.js",
     "start": "node server.js"
   },
   "repository": {
